@@ -1,0 +1,1 @@
+export class SupplierView{render(){}} export const SupplierViews=new SupplierView();

@@ -1,0 +1,1 @@
+export class SupplierController{} export const SupplierControllerInstance=new SupplierController();

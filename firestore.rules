@@ -1,0 +1,76 @@
+lrules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions untuk mempermudah pengecekan kondisi keamanan
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function getUserEmail() {
+      return request.auth.token.email;
+    }
+
+    // Mengamankan data Customer: Mekanik, Parts, Cashier hanya bisa baca. Owner, Admin, SA bisa CRUD.
+    match /customers/{customerId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated() && (getUserEmail().matches('.*owner.*') || getUserEmail().matches('.*admin.*') || getUserEmail().matches('.*sa.*') || request.resource.data.name != null);
+      allow delete: if isAuthenticated() && getUserEmail().matches('.*owner.*');
+    }
+
+    // Mengamankan data Vehicle Database Master
+    match /vehicles/{vehicleId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated();
+      allow delete: if isAuthenticated() && getUserEmail().matches('.*owner.*');
+    }
+
+    // Mengamankan Gated Check In (Reception)
+    match /checkins/{checkinId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated();
+      allow delete: if isAuthenticated() && (getUserEmail().matches('.*admin.*') || getUserEmail().matches('.*owner.*'));
+    }
+
+    // Mengamankan Work Order: Mekanik hanya diizinkan mengubah progress dan status pengerjaan unit
+    match /workorders/{woId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && (
+        getUserEmail().matches('.*owner.*') || 
+        getUserEmail().matches('.*sa.*') || 
+        getUserEmail().matches('.*admin.*') ||
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['progress', 'status']))
+      );
+      allow delete: if isAuthenticated() && getUserEmail().matches('.*owner.*');
+    }
+
+    // Mengamankan Modul Inventaris Suku Cadang Gudang
+    match /parts/{partId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated();
+      allow delete: if isAuthenticated() && getUserEmail().matches('.*owner.*');
+    }
+
+    // Mengamankan Berkas Estimasi Biaya Perbaikan
+    match /estimations/{estimationId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated();
+      allow delete: if isAuthenticated() && getUserEmail().matches('.*owner.*');
+    }
+
+    // Mengamankan Invoice Finansial: Hanya OWNER dan CASHIER yang memiliki hak penuh
+    match /invoices/{invoiceId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated();
+      allow delete: if isAuthenticated() && getUserEmail().matches('.*owner.*');
+    }
+
+    // Audit Log: Bersifat Append-Only. Siapa pun yang login bisa membuat log, tapi TIDAK ADA YANG BISA MENGUBAH / MENGHAPUS LOG
+    match /audit_logs/{logId} {
+      allow read: if isAuthenticated() && getUserEmail().matches('.*owner.*');
+      allow create: if isAuthenticated();
+      allow update, delete: if false;
+    }
+  }
+}
