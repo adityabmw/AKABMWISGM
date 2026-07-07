@@ -421,3 +421,94 @@ color:#D9DDE3;
 
 }
 
+
+.mechanic-board{
+
+margin-top:30px;
+
+background:#20242C;
+
+padding:25px;
+
+border-radius:18px;
+
+}
+
+.mechanic-board table{
+
+width:100%;
+
+border-collapse:collapse;
+
+}
+
+.mechanic-board th,
+.mechanic-board td{
+
+padding:14px;
+
+border-bottom:1px solid #313742;
+
+text-align:left;
+
+}
+
+.ready{
+
+color:#00C853;
+
+font-weight:bold;
+
+}
+
+.working{
+
+color:#2196F3;
+
+font-weight:bold;
+
+}
+
+.qc{
+
+color:#FF9800;
+
+font-weight:bold;
+
+}
+
+
+.stock-alert{
+
+margin-top:30px;
+
+background:#20242C;
+
+padding:25px;
+
+border-radius:18px;
+
+}
+
+.stock-alert ul{
+
+list-style:none;
+
+padding:0;
+
+}
+
+.stock-alert li{
+
+padding:12px;
+
+margin-bottom:8px;
+
+background:#2A303A;
+
+border-left:4px solid #FFB300;
+
+border-radius:10px;
+
+}
+
