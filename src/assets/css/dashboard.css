@@ -300,3 +300,52 @@ border-radius:14px;
 
 }
 
+
+.statistics{
+
+display:grid;
+
+grid-template-columns:repeat(4,1fr);
+
+gap:20px;
+
+margin-top:30px;
+
+}
+
+.stat-box{
+
+background:#20242C;
+
+padding:25px;
+
+border-radius:18px;
+
+box-shadow:0 10px 30px rgba(0,0,0,.35);
+
+transition:.25s;
+
+}
+
+.stat-box:hover{
+
+transform:translateY(-5px);
+
+}
+
+.stat-box h5{
+
+color:#9AA5B1;
+
+margin-bottom:12px;
+
+}
+
+.stat-box h2{
+
+font-size:30px;
+
+color:#fff;
+
+}
+
