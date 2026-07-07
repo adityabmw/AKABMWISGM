@@ -1,0 +1,23 @@
+export const ROLE={
+
+OWNER:"OWNER",
+
+ADMINISTRATOR:"ADMINISTRATOR",
+
+SERVICE_ADVISOR:"SERVICE_ADVISOR",
+
+HEAD_MECHANIC:"HEAD_MECHANIC",
+
+MECHANIC:"MECHANIC",
+
+CASHIER:"CASHIER",
+
+INVENTORY:"INVENTORY"
+
+};
+
+export function hasRole(user,role){
+
+return user?.role===role;
+
+}
