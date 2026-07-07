@@ -1,64 +1,10 @@
-// ==========================================================
-// AKA BMW ISGM
-// Bootstrap Engine
-// Enterprise v3.1.0
-// ==========================================================
+import { router } from "./core/router.js";
+import { Dashboard } from "./ui/pages/dashboard.js";
 
-import { App } from "./core/app.js";
-import { Logger } from "./core/logger.js";
+router.register("/",Dashboard);
 
-class BootstrapEngine {
+window.addEventListener("DOMContentLoaded",()=>{
 
-    async start() {
-
-        console.clear();
-
-        Logger.success("========================================");
-        Logger.success(" AKA BMW ISGM Enterprise");
-        Logger.success(" Integrated System Gateway Management");
-        Logger.success(" Boot Sequence Started");
-        Logger.success("========================================");
-
-        try {
-
-            await App.boot();
-
-            Logger.success("Application Ready.");
-
-        } catch (error) {
-
-            Logger.error("BOOT FAILED");
-
-            Logger.error(error);
-
-            throw error;
-
-        }
-
-    }
-
-}
-
-const Bootstrap = new BootstrapEngine();
-
-window.addEventListener("DOMContentLoaded", async () => {
-
-    try {
-
-        await Bootstrap.start();
-
-    } catch (error) {
-
-        console.error(error);
-
-    }
+router.go("/");
 
 });
-
-export {
-
-    Bootstrap,
-
-    BootstrapEngine
-
-};
