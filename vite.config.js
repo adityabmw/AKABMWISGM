@@ -5,17 +5,10 @@
 
 import { defineConfig } from 'vite';
 import basicSsl from '@vitejs/plugin-basic-ssl';
-import { visualizer } from 'vite-bundle-visualizer';
 
 export default defineConfig({
   plugins: [
     basicSsl(),
-    visualizer({
-      filename: 'dist/stats.html',
-      open: true,
-      gzipSize: true,
-      brotliSize: true
-    })
   ],
 
   server: {

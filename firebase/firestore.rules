@@ -1,0 +1,293 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ============================================================
+    // 1. FUNGSI HELPERS
+    // ============================================================
+    
+    // Auth check
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Role checks
+    function isOwner() {
+      return isAuthenticated() && request.auth.token.role == 'OWNER';
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && request.auth.token.role in ['OWNER', 'ADMIN'];
+    }
+    
+    function isServiceAdvisor() {
+      return isAuthenticated() && request.auth.token.role in ['OWNER', 'ADMIN', 'SERVICE_ADVISOR'];
+    }
+    
+    function isTechnician() {
+      return isAuthenticated() && request.auth.token.role in ['OWNER', 'ADMIN', 'SERVICE_ADVISOR', 'TECHNICIAN'];
+    }
+    
+    function isParts() {
+      return isAuthenticated() && request.auth.token.role in ['OWNER', 'ADMIN', 'PARTS'];
+    }
+    
+    function isCashier() {
+      return isAuthenticated() && request.auth.token.role in ['OWNER', 'ADMIN', 'CASHIER'];
+    }
+    
+    // Audit field validation
+    function hasAuditFields() {
+      return request.resource.data.createdAt != null &&
+             request.resource.data.createdBy == request.auth.uid &&
+             request.resource.data.status != null &&
+             request.resource.data.version != null &&
+             request.resource.data.deleted != null;
+    }
+    
+    function hasAuditFieldsUpdate() {
+      return request.resource.data.updatedAt != null &&
+             request.resource.data.updatedBy == request.auth.uid &&
+             request.resource.data.version == resource.data.version + 1;
+    }
+    
+    // Data validation
+    function isValidCustomer() {
+      return request.resource.data.name != null &&
+             request.resource.data.name.size() > 0 &&
+             request.resource.data.phone != null &&
+             request.resource.data.phone.size() > 0 &&
+             request.resource.data.phone.size() >= 10 &&
+             request.resource.data.phone.size() <= 15;
+    }
+    
+    function isValidVehicle() {
+      return request.resource.data.plate != null &&
+             request.resource.data.plate.size() >= 5 &&
+             request.resource.data.plate.size() <= 10 &&
+             request.resource.data.vin != null &&
+             request.resource.data.vin.size() == 17;
+    }
+    
+    function isValidWorkOrder() {
+      return request.resource.data.woNumber != null &&
+             request.resource.data.customerName != null &&
+             request.resource.data.status != null &&
+             request.resource.data.status in ['PROSES', 'WAITING_PARTS', 'SELESAI'];
+    }
+    
+    function isValidPart() {
+      return request.resource.data.partNumber != null &&
+             request.resource.data.partNumber.size() > 0 &&
+             request.resource.data.partName != null &&
+             request.resource.data.partName.size() > 0 &&
+             request.resource.data.stock != null &&
+             request.resource.data.stock >= 0;
+    }
+    
+    function isValidInvoice() {
+      return request.resource.data.invNumber != null &&
+             request.resource.data.grandTotal != null &&
+             request.resource.data.grandTotal >= 0 &&
+             request.resource.data.status != null &&
+             request.resource.data.status in ['PAID', 'UNPAID'];
+    }
+    
+    // Soft delete check
+    function isSoftDeleted() {
+      return resource.data.deleted == true;
+    }
+    
+    function isNotSoftDeleted() {
+      return resource.data.deleted != true;
+    }
+    
+    // Soft delete validation
+    function isValidSoftDelete() {
+      return request.resource.data.deleted == true &&
+             request.resource.data.deletedAt != null &&
+             request.resource.data.deletedBy == request.auth.uid;
+    }
+    
+    function isValidRestore() {
+      return request.resource.data.deleted == false &&
+             request.resource.data.deletedAt == null &&
+             request.resource.data.deletedBy == null &&
+             request.resource.data.restoredAt != null;
+    }
+    
+    // Field validation for update
+    function isValidUpdateFields() {
+      return request.resource.data.diff(resource.data).affectedKeys
+        .hasOnly(['name', 'phone', 'address', 'plate', 'vin', 'model', 'stock', 'sellPrice', 
+                  'status', 'progress', 'grandTotal', 'updatedAt', 'updatedBy', 'version',
+                  'deleted', 'deletedAt', 'deletedBy', 'restoredAt']);
+    }
+    
+    // ============================================================
+    // 2. KOLEKSI CUSTOMERS
+    // ============================================================
+    match /customers/{docId} {
+      allow list: if isAuthenticated() && isServiceAdvisor();
+      allow get: if isAuthenticated() && isServiceAdvisor();
+      allow create: if isAuthenticated() && isServiceAdvisor() && 
+                      isValidCustomer() && hasAuditFields();
+      allow update: if isAuthenticated() && isServiceAdvisor() && 
+                      isValidUpdateFields() &&
+                      (
+                        (isNotSoftDeleted() && hasAuditFieldsUpdate()) ||
+                        (isValidSoftDelete()) ||
+                        (isValidRestore())
+                      );
+      allow delete: if false;
+    }
+    
+    // ============================================================
+    // 3. KOLEKSI VEHICLES
+    // ============================================================
+    match /vehicles/{docId} {
+      allow list: if isAuthenticated() && isServiceAdvisor();
+      allow get: if isAuthenticated() && isServiceAdvisor();
+      allow create: if isAuthenticated() && isServiceAdvisor() && 
+                      isValidVehicle() && hasAuditFields();
+      allow update: if isAuthenticated() && isServiceAdvisor() && 
+                      isValidUpdateFields() &&
+                      (
+                        (isNotSoftDeleted() && hasAuditFieldsUpdate()) ||
+                        (isValidSoftDelete()) ||
+                        (isValidRestore())
+                      );
+      allow delete: if false;
+    }
+    
+    // ============================================================
+    // 4. KOLEKSI WORKORDERS
+    // ============================================================
+    match /workorders/{docId} {
+      allow list: if isAuthenticated() && isTechnician();
+      allow get: if isAuthenticated() && isTechnician();
+      allow create: if isAuthenticated() && isServiceAdvisor() && 
+                      isValidWorkOrder() && hasAuditFields();
+      allow update: if isAuthenticated() && isTechnician() && 
+                      isValidUpdateFields() &&
+                      (
+                        (
+                          isNotSoftDeleted() &&
+                          hasAuditFieldsUpdate() &&
+                          request.resource.data.diff(resource.data).affectedKeys
+                            .hasOnly(['progress', 'status', 'updatedAt', 'updatedBy', 'version'])
+                        ) ||
+                        (
+                          isServiceAdvisor() &&
+                          (isNotSoftDeleted() || isValidSoftDelete() || isValidRestore()) &&
+                          hasAuditFieldsUpdate()
+                        )
+                      );
+      allow delete: if false;
+    }
+    
+    // ============================================================
+    // 5. KOLEKSI PARTS (INVENTORY)
+    // ============================================================
+    match /parts/{docId} {
+      allow list: if isAuthenticated() && isParts();
+      allow get: if isAuthenticated() && isParts();
+      allow create: if isAuthenticated() && isParts() && 
+                      isValidPart() && hasAuditFields();
+      allow update: if isAuthenticated() && isParts() && 
+                      isValidUpdateFields() &&
+                      (
+                        (isNotSoftDeleted() && hasAuditFieldsUpdate()) ||
+                        (isValidSoftDelete()) ||
+                        (isValidRestore())
+                      );
+      allow delete: if false;
+    }
+    
+    // ============================================================
+    // 6. KOLEKSI INVOICES
+    // ============================================================
+    match /invoices/{docId} {
+      allow list: if isAuthenticated() && isCashier();
+      allow get: if isAuthenticated() && isCashier();
+      allow create: if isAuthenticated() && isCashier() && 
+                      isValidInvoice() && hasAuditFields();
+      allow update: if isAuthenticated() && isCashier() && 
+                      isValidUpdateFields() &&
+                      (
+                        (isNotSoftDeleted() && hasAuditFieldsUpdate()) ||
+                        (isValidSoftDelete()) ||
+                        (isValidRestore())
+                      );
+      allow delete: if false;
+    }
+    
+    // ============================================================
+    // 7. KOLEKSI CHECKINS
+    // ============================================================
+    match /checkins/{docId} {
+      allow list: if isAuthenticated() && isServiceAdvisor();
+      allow get: if isAuthenticated() && isServiceAdvisor();
+      allow create: if isAuthenticated() && isServiceAdvisor() && hasAuditFields();
+      allow update: if isAuthenticated() && isServiceAdvisor() && 
+                      isValidUpdateFields() &&
+                      (
+                        (isNotSoftDeleted() && hasAuditFieldsUpdate()) ||
+                        (isValidSoftDelete()) ||
+                        (isValidRestore())
+                      );
+      allow delete: if false;
+    }
+    
+    // ============================================================
+    // 8. KOLEKSI ESTIMATIONS
+    // ============================================================
+    match /estimations/{docId} {
+      allow list: if isAuthenticated() && isServiceAdvisor();
+      allow get: if isAuthenticated() && isServiceAdvisor();
+      allow create: if isAuthenticated() && isServiceAdvisor() && hasAuditFields();
+      allow update: if isAuthenticated() && isServiceAdvisor() && 
+                      isValidUpdateFields() &&
+                      (
+                        (isNotSoftDeleted() && hasAuditFieldsUpdate()) ||
+                        (isValidSoftDelete()) ||
+                        (isValidRestore())
+                      );
+      allow delete: if false;
+    }
+    
+    // ============================================================
+    // 9. KOLEKSI AUDIT LOGS
+    // ============================================================
+    match /audit_logs/{docId} {
+      allow list: if isAuthenticated() && isAdmin();
+      allow get: if isAuthenticated() && isAdmin();
+      allow create: if isAuthenticated();
+      allow update: if false;
+      allow delete: if false;
+    }
+    
+    // ============================================================
+    // 10. KOLEKSI USERS
+    // ============================================================
+    match /users/{docId} {
+      allow list: if isAuthenticated() && isAdmin();
+      allow get: if isAuthenticated() && isAdmin();
+      allow create: if isAuthenticated() && isOwner() && 
+                      request.resource.data.email != null &&
+                      request.resource.data.role != null &&
+                      request.resource.data.role in ['OWNER', 'ADMIN', 'SERVICE_ADVISOR', 'TECHNICIAN', 'PARTS', 'CASHIER'];
+      allow update: if isAuthenticated() && isAdmin() &&
+                      request.resource.data.role in ['OWNER', 'ADMIN', 'SERVICE_ADVISOR', 'TECHNICIAN', 'PARTS', 'CASHIER'];
+      allow delete: if false;
+    }
+    
+    // ============================================================
+    // 11. KOLEKSI CUSTOM — DEFAULT DENY
+    // ============================================================
+    match /{collection}/{docId} {
+      allow read: if false;
+      allow write: if false;
+    }
+  }
+}
