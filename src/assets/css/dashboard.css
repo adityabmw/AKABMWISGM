@@ -1,0 +1,49 @@
+
+.dashboard-card{
+
+background:#20242C;
+
+border-radius:18px;
+
+padding:24px;
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+transition:.25s;
+
+box-shadow:0 10px 25px rgba(0,0,0,.35);
+
+}
+
+.dashboard-card:hover{
+
+transform:translateY(-4px);
+
+}
+
+.dashboard-card h5{
+
+color:#9AA5B1;
+
+margin-bottom:8px;
+
+}
+
+.dashboard-card h2{
+
+font-size:34px;
+
+}
+
+.dashboard-card span{
+
+font-size:44px;
+
+color:#0066B1;
+
+}
+
