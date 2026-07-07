@@ -512,3 +512,34 @@ border-radius:10px;
 
 }
 
+
+.app-layout{
+
+display:flex;
+
+min-height:100vh;
+
+background:#0F1115;
+
+}
+
+.main-content{
+
+flex:1;
+
+margin-left:270px;
+
+display:flex;
+
+flex-direction:column;
+
+}
+
+.page-content{
+
+padding:30px;
+
+overflow:auto;
+
+}
+
