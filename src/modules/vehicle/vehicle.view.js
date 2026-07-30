@@ -1,90 +1,132 @@
-// ==========================================================
-// AKA BMW ISGM
-// Vehicle View
-// Enterprise v6.0
-// ==========================================================
+import VehicleService from "./vehicle.service.js";
 
-class VehicleView {
+class VehicleView{
 
-    constructor() {
+vehicles=[];
 
-        this.tableBody =
-            document.getElementById("vehicleTableBody");
+async render(){
 
-    }
+const page=document.getElementById("vehiclePage");
+if(!page)return;
 
-    render(snapshot) {
+page.innerHTML=`
+<div class="container-fluid">
 
-        if (!this.tableBody) return;
+<div class="d-flex justify-content-between mb-3">
 
-        this.tableBody.innerHTML = "";
+<h3><i class="fa-solid fa-car"></i> Master Kendaraan</h3>
 
-        snapshot.forEach(doc => {
+<button class="btn btn-primary" id="btnAddVehicle">
+<i class="fa-solid fa-plus"></i>
+Tambah Kendaraan
+</button>
 
-            const v = doc.data();
+</div>
 
-            this.tableBody.innerHTML += `
+<input
+id="vehicleSearch"
+class="form-control mb-3"
+placeholder="Cari VIN / Plat / Model">
 
-            <tr>
+<div class="table-responsive">
 
-                <td>${v.vehicleCode ?? "-"}</td>
+<table class="table table-striped table-hover">
 
-                <td>${v.plateNumber ?? "-"}</td>
+<thead>
 
-                <td>${v.brand ?? "-"}</td>
+<tr>
+<th>Plat</th>
+<th>VIN</th>
+<th>Model</th>
+<th>Mesin</th>
+<th>Tahun</th>
+<th>KM</th>
+<th width="150">Aksi</th>
+</tr>
 
-                <td>${v.model ?? "-"}</td>
+</thead>
 
-                <td>${v.productionYear ?? "-"}</td>
+<tbody id="vehicleTable"></tbody>
 
-                <td>${v.odometer ?? 0} km</td>
+</table>
 
-                <td>
+</div>
 
-                    <span class="badge bg-success">
+</div>
+`;
 
-                        ${v.status ?? "ACTIVE"}
+document.getElementById("vehicleSearch").addEventListener("input",(e)=>{
+this.draw(e.target.value);
+});
 
-                    </span>
+VehicleService.realtime((snap)=>{
 
-                </td>
+this.vehicles=[];
 
-                <td>
+snap.forEach(doc=>{
 
-                    <button
-                        class="btn btn-sm btn-primary"
-                        onclick="editVehicle('${doc.id}')">
+this.vehicles.push({
+id:doc.id,
+...doc.data()
+});
 
-                        Edit
+});
 
-                    </button>
+this.draw("");
 
-                    <button
-                        class="btn btn-sm btn-danger"
-                        onclick="deleteVehicle('${doc.id}')">
-
-                        Hapus
-
-                    </button>
-
-                </td>
-
-            </tr>
-
-            `;
-
-        });
-
-    }
+});
 
 }
 
-const VehicleViews = new VehicleView();
+draw(keyword=""){
 
-export {
+const body=document.getElementById("vehicleTable");
 
-    VehicleViews,
+const q=keyword.toLowerCase();
 
-    VehicleView
+const rows=this.vehicles.filter(v=>
 
-};
+(v.plateNo||"").toLowerCase().includes(q)||
+(v.vin||"").toLowerCase().includes(q)||
+(v.model||"").toLowerCase().includes(q)
+
+);
+
+body.innerHTML=rows.map(v=>`
+
+<tr>
+
+<td>${v.plateNo||""}</td>
+<td>${v.vin||""}</td>
+<td>${v.model||""}</td>
+<td>${v.engine||""}</td>
+<td>${v.year||""}</td>
+<td>${Number(v.odometer||0).toLocaleString("id-ID")} km</td>
+
+<td>
+
+<button class="btn btn-warning btn-sm">
+Edit
+</button>
+
+<button class="btn btn-danger btn-sm">
+Hapus
+</button>
+
+</td>
+
+</tr>
+
+`).join("");
+
+if(rows.length===0){
+
+body.innerHTML="<tr><td colspan='7' class='text-center'>Belum ada data kendaraan.</td></tr>";
+
+}
+
+}
+
+}
+
+export default new VehicleView();

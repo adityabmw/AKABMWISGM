@@ -1,0 +1,143 @@
+/* ==========================================================
+   AKA BMW ISGM
+   Booking CSS
+   Enterprise v6.0
+========================================================== */
+
+.booking-card{
+    background:#131c2d;
+    border:1px solid #22304a;
+    border-radius:12px;
+    padding:20px;
+}
+
+.booking-title{
+    color:#ffffff;
+    font-size:18px;
+    font-weight:700;
+}
+
+.booking-subtitle{
+    color:#8fa8c9;
+    font-size:13px;
+}
+
+.booking-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.booking-table thead{
+    background:#182338;
+}
+
+.booking-table th{
+    color:#ffffff;
+    font-size:13px;
+    font-weight:600;
+    padding:12px;
+    border-bottom:1px solid #2d4265;
+}
+
+.booking-table td{
+    color:#dce6f2;
+    padding:12px;
+    border-bottom:1px solid #24344f;
+    vertical-align:middle;
+}
+
+.booking-table tbody tr:hover{
+    background:#1b2941;
+}
+
+.booking-status{
+    padding:4px 10px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:600;
+}
+
+.booking-status.pending{
+    background:#ffc107;
+    color:#000;
+}
+
+.booking-status.confirmed{
+    background:#17a2b8;
+    color:#fff;
+}
+
+.booking-status.checkin{
+    background:#0d6efd;
+    color:#fff;
+}
+
+.booking-status.process{
+    background:#fd7e14;
+    color:#fff;
+}
+
+.booking-status.finished{
+    background:#198754;
+    color:#fff;
+}
+
+.booking-status.cancelled{
+    background:#dc3545;
+    color:#fff;
+}
+
+.booking-toolbar{
+    display:flex;
+    gap:10px;
+    margin-bottom:20px;
+    flex-wrap:wrap;
+}
+
+.booking-toolbar .btn{
+    min-width:120px;
+}
+
+.booking-form label{
+    color:#bfcde0;
+    font-size:13px;
+    margin-bottom:5px;
+}
+
+.booking-form .form-control,
+.booking-form .form-select{
+    background:#101827;
+    border:1px solid #2f4768;
+    color:#ffffff;
+}
+
+.booking-form .form-control:focus,
+.booking-form .form-select:focus{
+    border-color:#0dcaf0;
+    box-shadow:none;
+}
+
+.booking-summary{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:15px;
+}
+
+.booking-summary-card{
+    background:#162235;
+    border:1px solid #2a3e5d;
+    border-radius:10px;
+    padding:18px;
+}
+
+.booking-summary-title{
+    color:#9fb3cf;
+    font-size:13px;
+}
+
+.booking-summary-value{
+    color:#ffffff;
+    font-size:24px;
+    font-weight:700;
+    margin-top:8px;
+}

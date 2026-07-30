@@ -1,1 +1,3 @@
-import {Repository} from '../../core/repository.js'; export class SupplierRepository extends Repository{constructor(){super('suppliers');}} export const SupplierRepo=new SupplierRepository();
+export default class SupplierRepository {
+
+}

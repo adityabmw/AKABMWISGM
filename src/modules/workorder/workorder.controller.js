@@ -1,60 +1,31 @@
-// ==========================================================
-// AKA BMW ISGM
-// Work Order Controller
-// Enterprise v6.0
-// ==========================================================
+import Service from "./workorder.service.js";
 
-import { WorkOrderServices } from "./workorder.service.js";
-import { WorkOrderValidation } from "./workorder.validator.js";
+class WorkOrderController{
 
-class WorkOrderController {
+all(){
+return Service.getAll();
+}
 
-    async create(data) {
+detail(id){
+return Service.get(id);
+}
 
-        WorkOrderValidation.throwIfInvalid(data);
+save(data){
+return Service.create(data);
+}
 
-        return await WorkOrderServices.create(data);
+update(id,data){
+return Service.update(id,data);
+}
 
-    }
+finish(id){
+return Service.close(id);
+}
 
-    async update(id, data) {
-
-        WorkOrderValidation.throwIfInvalid(data);
-
-        return await WorkOrderServices.update(
-            id,
-            data
-        );
-
-    }
-
-    async delete(id) {
-
-        return await WorkOrderServices.remove(id);
-
-    }
-
-    async detail(id) {
-
-        return await WorkOrderServices.find(id);
-
-    }
-
-    async list() {
-
-        return await WorkOrderServices.findAll();
-
-    }
+cancel(id){
+return Service.cancel(id);
+}
 
 }
 
-const WorkOrderControllerInstance =
-    new WorkOrderController();
-
-export {
-
-    WorkOrderControllerInstance,
-
-    WorkOrderController
-
-};
+export default new WorkOrderController();

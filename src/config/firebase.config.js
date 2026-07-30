@@ -1,59 +1,23 @@
-// ==========================================================
-// AKA BMW ISGM
-// Firebase Configuration
-// Enterprise v3.1.0
-// ==========================================================
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
-import {
-    getAuth
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-import {
-    getFirestore,
-    enableIndexedDbPersistence
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
+import { getFunctions } from "firebase/functions";
 
 const firebaseConfig = {
-
-    apiKey: "AIzaSyC9tLGHRc-_8gnNsUOfLQDTshbEAVHaR7c",
-
-    authDomain: "akabmwisgm.firebaseapp.com",
-
-    projectId: "akabmwisgm",
-
-    storageBucket: "akabmwisgm.firebasestorage.app",
-
-    messagingSenderId: "317584647702",
-
-    appId: "1:317584647702:web:8d7b6dbd9334f973eeb737",
-
-    measurementId: "G-DVB1P9HW3M"
-
+  apiKey: "AIzaSyC9tLGHRc-_8gnNsUOfLQDTshbEAVHaR7c",
+  authDomain: "akabmwisgm.firebaseapp.com",
+  projectId: "akabmwisgm",
+  storageBucket: "akabmwisgm.firebasestorage.app",
+  messagingSenderId: "317584647702",
+  appId: "1:317584647702:web:8d7b6dbd9334f973eeb737"
 };
 
-const FirebaseApp = initializeApp(firebaseConfig);
+const App = initializeApp(firebaseConfig);
 
-const Auth = getAuth(FirebaseApp);
+const Auth = getAuth(App);
+const DB = getFirestore(App);
+const Storage = getStorage(App);
+const Functions = getFunctions(App);
 
-const DB = getFirestore(FirebaseApp);
-
-enableIndexedDbPersistence(DB)
-.catch(() => {
-
-    console.warn(
-        "Firestore persistence unavailable."
-    );
-
-});
-
-export {
-
-    FirebaseApp,
-
-    Auth,
-
-    DB
-
-};
+export { App, Auth, DB, Storage, Functions };

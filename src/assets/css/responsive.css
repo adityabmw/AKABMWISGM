@@ -1,0 +1,9 @@
+/* AKA BMW Mobile Responsive Adjustments */
+@media (max-width: 768px) {
+  .table-responsive {
+    font-size: 0.85rem;
+  }
+  .btn-sm {
+    padding: 0.25rem 0.4rem;
+  }
+}

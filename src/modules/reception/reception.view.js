@@ -1,80 +1,89 @@
-// ==========================================================
-// AKA BMW ISGM
-// Reception View
-// Enterprise v6.0
-// ==========================================================
+import CustomerService from "../customer/customer.service.js";
+import VehicleService from "../vehicle/vehicle.service.js";
+import WorkOrderService from "../workorder/workorder.service.js";
 
-class ReceptionView {
+class ReceptionView{
 
-    constructor() {
+async render(){
 
-        this.tableBody =
-            document.getElementById("receptionTableBody");
+const page=document.getElementById("receptionPage");
+if(!page) return;
 
-    }
+page.innerHTML=`
+<div class="container-fluid">
 
-    render(snapshot) {
+<div class="row">
 
-        if (!this.tableBody) return;
+<div class="col-lg-8">
 
-        this.tableBody.innerHTML = "";
+<div class="card shadow-sm">
 
-        snapshot.forEach(doc => {
+<div class="card-header">
+<h4><i class="fa-solid fa-car-side"></i> Penerimaan Kendaraan</h4>
+</div>
 
-            const r = doc.data();
+<div class="card-body">
 
-            this.tableBody.innerHTML += `
+<div class="mb-3">
+<label>Customer</label>
+<select id="rcCustomer" class="form-select"></select>
+</div>
 
-            <tr>
+<div class="mb-3">
+<label>Kendaraan</label>
+<select id="rcVehicle" class="form-select"></select>
+</div>
 
-                <td>${r.receptionCode ?? "-"}</td>
+<div class="mb-3">
+<label>Keluhan Pelanggan</label>
+<textarea id="rcComplaint" class="form-control" rows="4"></textarea>
+</div>
 
-                <td>${r.customerName ?? "-"}</td>
+<button class="btn btn-primary" id="btnCreateWO">
+<i class="fa-solid fa-file-circle-plus"></i>
+Buat Work Order
+</button>
 
-                <td>${r.plateNumber ?? "-"}</td>
+</div>
 
-                <td>${r.serviceAdvisor ?? "-"}</td>
+</div>
 
-                <td>${r.odometer ?? 0} km</td>
+</div>
 
-                <td>${r.status ?? "CHECK-IN"}</td>
+<div class="col-lg-4">
 
-                <td>
+<div class="card shadow-sm">
 
-                    <button
-                        class="btn btn-sm btn-primary"
-                        onclick="editReception('${doc.id}')">
+<div class="card-header">
+Status
+</div>
 
-                        Edit
+<div class="card-body">
 
-                    </button>
+<ul class="list-group">
 
-                    <button
-                        class="btn btn-sm btn-danger"
-                        onclick="deleteReception('${doc.id}')">
+<li class="list-group-item">Customer ✔</li>
+<li class="list-group-item">Vehicle ✔</li>
+<li class="list-group-item">Reception ✔</li>
+<li class="list-group-item">Work Order</li>
+<li class="list-group-item">Diagnosis</li>
+<li class="list-group-item">Invoice</li>
 
-                        Hapus
+</ul>
 
-                    </button>
+</div>
 
-                </td>
+</div>
 
-            </tr>
+</div>
 
-            `;
+</div>
 
-        });
-
-    }
+</div>
+`;
 
 }
 
-const ReceptionViews = new ReceptionView();
+}
 
-export {
-
-    ReceptionViews,
-
-    ReceptionView
-
-};
+export default new ReceptionView();

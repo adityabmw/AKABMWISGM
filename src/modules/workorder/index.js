@@ -50,3 +50,4 @@ export {
     WorkOrderModule
 
 };
+export { default as WorkOrderForm } from "./workorder.form.js";

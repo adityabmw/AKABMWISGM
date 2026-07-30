@@ -1,1 +1,3 @@
-export class Supplier{constructor(d={}){Object.assign(this,{id:'',name:'',pic:'',phone:'',status:'ACTIVE'},d);}toJSON(){return {...this};}}
+export default class SupplierModel {
+
+}

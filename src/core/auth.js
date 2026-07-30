@@ -8,7 +8,7 @@ import {
     signInWithEmailAndPassword,
     signOut,
     onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+} from "firebase/auth";
 
 import { Auth } from "../config/firebase.config.js";
 import { Database } from "./database.js";

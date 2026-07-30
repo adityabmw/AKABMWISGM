@@ -1,0 +1,10 @@
+/* AKA BMW Custom UI Components Style Overlay */
+.card-bmw {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #ffffff;
+}
+.badge-bmw-blue {
+  background-color: #0066cc;
+  color: #ffffff;
+}

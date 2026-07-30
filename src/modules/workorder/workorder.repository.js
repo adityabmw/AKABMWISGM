@@ -1,71 +1,72 @@
-// ==========================================================
-// AKA BMW ISGM
-// Work Order Repository
-// Enterprise v6.0
-// ==========================================================
+import { DB } from "../../config/firebase.config.js";
+import {
+collection,
+doc,
+getDocs,
+getDoc,
+addDoc,
+updateDoc,
+deleteDoc
+} from "firebase/firestore";
 
-import { Repository } from "../../core/repository.js";
+const COLLECTION="workorder";
 
-class WorkOrderRepository extends Repository {
+class WorkorderRepository{
 
-    constructor() {
+async getAll(){
 
-        super("workorders");
+const snap=await getDocs(collection(DB,COLLECTION));
 
-    }
-
-    async save(workOrder) {
-
-        return await this.create(
-            workOrder.toJSON()
-        );
-
-    }
-
-    async saveWithId(id, workOrder) {
-
-        return await this.createWithId(
-            id,
-            workOrder.toJSON()
-        );
-
-    }
-
-    async updateWorkOrder(id, workOrder) {
-
-        return await this.update(
-            id,
-            workOrder.toJSON()
-        );
-
-    }
-
-    async deleteWorkOrder(id) {
-
-        return await this.delete(id);
-
-    }
-
-    async get(id) {
-
-        return await this.find(id);
-
-    }
-
-    async getAll() {
-
-        return await this.all();
-
-    }
+return snap.docs.map(d=>({
+id:d.id,
+...d.data()
+}));
 
 }
 
-const WorkOrderRepo = new WorkOrderRepository();
+async get(id){
 
-export {
+const snap=await getDoc(doc(DB,COLLECTION,id));
 
-    WorkOrderRepo,
+if(!snap.exists()) return null;
 
-    WorkOrderRepository
-
+return{
+id:snap.id,
+...snap.data()
 };
+
+}
+
+async create(data){
+
+const ref=await addDoc(collection(DB,COLLECTION),{
+...data,
+createdAt:new Date().toISOString()
+});
+
+return ref.id;
+
+}
+
+async update(id,data){
+
+await updateDoc(doc(DB,COLLECTION,id),{
+...data,
+updatedAt:new Date().toISOString()
+});
+
+return true;
+
+}
+
+async delete(id){
+
+await deleteDoc(doc(DB,COLLECTION,id));
+
+return true;
+
+}
+
+}
+
+export default new WorkorderRepository();

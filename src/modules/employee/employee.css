@@ -1,0 +1,11 @@
+/* AKA BMW ISGM - Employee Dashboard Stylesheet */
+.employee-card {
+  border-left: 4px solid #0066cc;
+  transition: all 0.2s ease-in-out;
+}
+.employee-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.status-active { color: #28a745; font-weight: bold; }
+.status-inactive { color: #dc3545; font-weight: bold; }

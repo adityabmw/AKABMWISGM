@@ -1,0 +1,38 @@
+:root{
+    --aka-bg:#0b1017;
+    --aka-sidebar:#101722;
+    --aka-card:#182332;
+    --aka-blue:#00AEEF;
+    --aka-green:#1DD75B;
+    --aka-red:#ff4d4f;
+    --aka-orange:#ff9800;
+    --aka-text:#F2F6FA;
+    --aka-muted:#93A4B5;
+}
+
+body{
+    background:var(--aka-bg);
+    color:var(--aka-text);
+    font-family:Inter,Segoe UI,sans-serif;
+}
+
+.sidebar{
+    background:linear-gradient(180deg,#0c1119,#182433);
+}
+
+.kpi-card{
+    background:var(--aka-card);
+    border-radius:20px;
+    border:1px solid rgba(255,255,255,.05);
+    box-shadow:0 8px 30px rgba(0,0,0,.35);
+}
+
+.topbar{
+    background:#111827;
+    backdrop-filter:blur(20px);
+}
+
+.btn-primary{
+    background:var(--aka-blue);
+    border:none;
+}

@@ -1,107 +1,22 @@
-// ==========================================================
-// AKA BMW ISGM
-// Vehicle Validator
-// Enterprise v6.0
-// ==========================================================
+export function validateVehicle(data){
 
-class VehicleValidation {
+const errors=[];
 
-    static validate(data = {}) {
+if(!data.customerId)
+errors.push("Customer wajib dipilih");
 
-        const errors = [];
+if(!data.plateNumber?.trim())
+errors.push("Nomor polisi wajib diisi");
 
-        if (!data.customerId) {
+if(!data.vin?.trim())
+errors.push("VIN wajib diisi");
 
-            errors.push("Customer wajib dipilih.");
+if(data.vin && data.vin.length!==17)
+errors.push("VIN harus 17 karakter");
 
-        }
-
-        if (!data.plateNumber) {
-
-            errors.push("Nomor Polisi wajib diisi.");
-
-        }
-
-        if (!data.brand) {
-
-            errors.push("Brand kendaraan wajib diisi.");
-
-        }
-
-        if (!data.model) {
-
-            errors.push("Model kendaraan wajib diisi.");
-
-        }
-
-        if (data.productionYear) {
-
-            const year = Number(data.productionYear);
-
-            const currentYear =
-                new Date().getFullYear() + 1;
-
-            if (
-                year < 1950 ||
-                year > currentYear
-            ) {
-
-                errors.push(
-                    "Tahun produksi tidak valid."
-                );
-
-            }
-
-        }
-
-        if (data.vin) {
-
-            const vin =
-                data.vin.trim().toUpperCase();
-
-            if (
-                vin.length !== 17
-            ) {
-
-                errors.push(
-                    "VIN harus terdiri dari 17 karakter."
-                );
-
-            }
-
-        }
-
-        return {
-
-            valid: errors.length === 0,
-
-            errors
-
-        };
-
-    }
-
-    static throwIfInvalid(data) {
-
-        const result =
-            this.validate(data);
-
-        if (!result.valid) {
-
-            throw new Error(
-                result.errors.join("\n")
-            );
-
-        }
-
-        return true;
-
-    }
+return{
+valid:errors.length===0,
+errors
+};
 
 }
-
-export {
-
-    VehicleValidation
-
-};

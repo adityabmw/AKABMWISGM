@@ -1,1 +1,3 @@
-export class SupplierController{} export const SupplierControllerInstance=new SupplierController();
+export default class SupplierController {
+
+}

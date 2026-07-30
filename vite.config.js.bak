@@ -1,0 +1,90 @@
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  plugins: [],
+  server: {
+    host: "0.0.0.0",
+    port: 3000,
+    https: false,
+    cors: true,
+    open: false,
+    hmr: {
+      overlay: true
+    }
+  },
+  preview: {
+    host: "0.0.0.0",
+    port: 4173,
+    https: false
+  },
+  build: {
+    outDir: "dist",
+    assetsDir: "assets",
+    emptyOutDir: true,
+    sourcemap: false,
+    target: "es2020",
+    minify: "esbuild",
+    chunkSizeWarningLimit: 1600,
+    rollupOptions: {
+      input: {
+        main: "index.html"
+      },
+      output: {
+        manualChunks: {
+          firebase: [
+            "firebase/app",
+            "firebase/auth",
+            "firebase/firestore"
+          ],
+          charts: [
+            "chart.js"
+          ]
+        },
+        chunkFileNames: "assets/js/[name]-[hash].js",
+        entryFileNames: "assets/js/[name]-[hash].js",
+        assetFileNames: ({ name }) => {
+          if (!name) return "assets/[name]-[hash][extname]";
+          if (/\.(png|jpg|jpeg|gif|svg|webp)$/i.test(name)) return "assets/images/[name]-[hash][extname]";
+          if (/\.css$/i.test(name)) return "assets/css/[name]-[hash][extname]";
+          if (/\.(woff|woff2|ttf|otf)$/i.test(name)) return "assets/fonts/[name]-[hash][extname]";
+          return "assets/[name]-[hash][extname]";
+        }
+      }
+    }
+  },
+  resolve: {
+    alias: {
+      "@": "/src",
+      "@components": "/src/ui/components",
+      "@layout": "/src/ui/layout",
+      "@pages": "/src/ui/pages",
+      "@core": "/src/core",
+      "@modules": "/src/modules",
+      "@shared": "/src/shared",
+      "@config": "/src/config",
+      "@assets": "/src/assets"
+    }
+  },
+  optimizeDeps: {
+    include: [
+      "firebase/app",
+      "firebase/auth",
+      "firebase/firestore",
+      "chart.js"
+    ]
+  },
+  css: {
+    devSourcemap: true,
+    modules: {
+      localsConvention: "camelCase"
+    }
+  },
+  define: {
+    __APP_NAME__: JSON.stringify("AKA BMW ISGM"),
+    __APP_VERSION__: JSON.stringify("5.0.0"),
+    __BUILD_TIME__: JSON.stringify(new Date().toISOString())
+  },
+  esbuild: {
+    drop: process.env.NODE_ENV === "production" ? ["console", "debugger"] : []
+  }
+});

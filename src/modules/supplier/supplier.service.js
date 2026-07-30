@@ -1,1 +1,3 @@
-import {SupplierRepo} from './supplier.repository.js'; export class SupplierService{list(){return SupplierRepo.all();}} export const SupplierServices=new SupplierService();
+export default class SupplierService {
+
+}

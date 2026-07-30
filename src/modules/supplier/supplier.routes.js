@@ -1,1 +1,3 @@
-import {Router} from '../../core/router.js'; export const SupplierRoute={register(){Router.register({name:'supplier',path:'/supplier',action:()=>window.showSupplierPage?.()});}};
+export default class SupplierRoutes {
+
+}

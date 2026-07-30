@@ -1,0 +1,33 @@
+// ============================================================================
+// AKA BMW ISGM - ENTERPRISE BACKEND CONFIGURATION
+// FILE: src/config/firebase.config.js
+// POSITIONING: Single Source of Truth - Configuration Gateway
+// CHIEF SYSTEM ARCHITECT: Pak Adit | POWERED BY TRUST
+// ============================================================================
+
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
+import { getFunctions } from "firebase/functions";
+
+// Kredensial Produksi Valid Lintas Platform AKA BMW Service Indonesia
+const firebaseConfig = {
+  apiKey: "AIzaSyC9tLGHRc-_8gnNsUOfLQDTshbEAVHaR7c",
+  authDomain: "akabmwisgm.firebaseapp.com",
+  projectId: "akabmwisgm",
+  storageBucket: "akabmwisgm.appspot.com",
+  messagingSenderId: "1095598910825",
+  appId: "1:1095598910825:web:86de0a7bfbd05e6b7296cc"
+};
+
+// Global Initialization
+const App = initializeApp(firebaseConfig);
+
+// Validated Service Instances (Case-Sensitive Alignment with app.js)
+const Auth = getAuth(Auth);
+const DB = getFirestore(App);
+const Storage = getStorage(App);
+const Functions = getFunctions(App);
+
+export { App, Auth, DB, Storage, Functions };

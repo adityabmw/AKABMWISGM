@@ -1,76 +1,47 @@
-// ==========================================================
-// AKA BMW ISGM
-// Work Order Service
-// Enterprise v6.0
-// ==========================================================
+import Repository from "./workorder.repository.js";
 
-import { WorkOrder } from "./workorder.model.js";
-import { WorkOrderRepo } from "./workorder.repository.js";
+class WorkOrderService{
 
-class WorkOrderService {
+async getAll(){
+return Repository.getAll();
+}
 
-    async create(data) {
+async get(id){
+return Repository.get(id);
+}
 
-        const workOrder = new WorkOrder(data);
+async create(data){
 
-        return await WorkOrderRepo.save(
-            workOrder
-        );
+const now=new Date();
 
-    }
+const no=`WO-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,"0")}${String(now.getDate()).padStart(2,"0")}-${Date.now().toString().slice(-6)}`;
 
-    async createWithId(id, data) {
-
-        const workOrder = new WorkOrder(data);
-
-        return await WorkOrderRepo.saveWithId(
-            id,
-            workOrder
-        );
-
-    }
-
-    async update(id, data) {
-
-        const workOrder = new WorkOrder(data);
-
-        workOrder.id = id;
-
-        workOrder.updatedAt = new Date().toISOString();
-
-        return await WorkOrderRepo.updateWorkOrder(
-            id,
-            workOrder
-        );
-
-    }
-
-    async remove(id) {
-
-        return await WorkOrderRepo.deleteWorkOrder(id);
-
-    }
-
-    async find(id) {
-
-        return await WorkOrderRepo.get(id);
-
-    }
-
-    async findAll() {
-
-        return await WorkOrderRepo.getAll();
-
-    }
+return Repository.create({
+...data,
+workOrderNo:no,
+status:"OPEN",
+createdAt:now.toISOString()
+});
 
 }
 
-const WorkOrderServices = new WorkOrderService();
+async update(id,data){
+return Repository.update(id,data);
+}
 
-export {
+async close(id){
+return Repository.update(id,{
+status:"FINISHED",
+closedAt:new Date().toISOString()
+});
+}
 
-    WorkOrderServices,
+async cancel(id){
+return Repository.update(id,{
+status:"CANCELLED"
+});
+}
 
-    WorkOrderService
+}
 
-};
+export default new WorkOrderService();

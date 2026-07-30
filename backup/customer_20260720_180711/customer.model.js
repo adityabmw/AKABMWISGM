@@ -1,0 +1,35 @@
+export default class Customer{
+constructor(data={}){
+Object.assign(this,{
+id:"",
+customerCode:"",
+name:"",
+phone:"",
+whatsapp:"",
+email:"",
+address:"",
+city:"",
+province:"",
+postalCode:"",
+identityNumber:"",
+company:"",
+taxNumber:"",
+memberLevel:"REGULAR",
+notes:"",
+totalVehicle:0,
+totalWorkOrder:0,
+totalInvoice:0,
+totalSpent:0,
+lastVisit:null,
+active:true,
+createdBy:"",
+updatedBy:"",
+createdAt:"",
+updatedAt:"",
+deletedAt:null
+},data);
+}
+toJSON(){
+return {...this};
+}
+}

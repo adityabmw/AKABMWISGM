@@ -1,1 +1,3 @@
-export class SupplierView{render(){}} export const SupplierViews=new SupplierView();
+export default class SupplierView {
+
+}

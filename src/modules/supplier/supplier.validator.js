@@ -1,1 +1,3 @@
-export class SupplierValidation{static validate(d){const e=[];if(!d.name)e.push('Nama wajib');if(!d.phone)e.push('HP wajib');return{valid:!e.length,errors:e};}}
+export default class SupplierValidator {
+
+}

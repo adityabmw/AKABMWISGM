@@ -1,121 +1,79 @@
-// ==========================================================
-// AKA BMW ISGM
-// Enterprise Router Engine
-// Version : 3.1.0
-// ==========================================================
+/*
+==================================================
+ AKA BMW ISGM ENTERPRISE ROUTER (FULLY INTEGRATED)
+==================================================
+*/
+import customer from "../modules/customer/index.js";
+import vehicle from "../modules/vehicle/index.js";
+import partsView from "../modules/parts/parts.view.js";
+import settingsView from "../modules/settings/settings.view.js";
 
-import { Logger } from "./logger.js";
+class Router {
+  constructor() {
+    this.routes = new Map();
+  }
 
-class RouterEngine {
+  register(name, module) {
+    this.routes.set(name, module);
+  }
 
-    constructor() {
+  get(name) {
+    return this.routes.get(name);
+  }
 
-        this.routes = new Map();
+  has(name) {
+    return this.routes.has(name);
+  }
 
-        this.current = null;
-
-        this.registerDefaultRoutes();
-
-    }
-
-    registerDefaultRoutes() {
-
-        this.register({
-
-            name: "login",
-
-            render: () => {
-
-                document.getElementById("authPage")?.classList.remove("d-none");
-
-                document.getElementById("dashboardPage")?.classList.add("d-none");
-
-                Logger.info("Login Page Loaded");
-
-            }
-
-        });
-
-        this.register({
-
-            name: "dashboard",
-
-            render: () => {
-
-                document.getElementById("authPage")?.classList.add("d-none");
-
-                document.getElementById("dashboardPage")?.classList.remove("d-none");
-
-                Logger.info("Dashboard Loaded");
-
-            }
-
-        });
-
-    }
-
-    register(route) {
-
-        if (!route.name) {
-
-            throw new Error("Route name is required.");
-
-        }
-
-        this.routes.set(route.name, route);
-
-    }
-
-    navigate(name, data = null) {
-
-        const route = this.routes.get(name);
-
-        if (!route) {
-
-            Logger.warning(`Route "${name}" not found.`);
-
-            return;
-
-        }
-
-        this.current = name;
-
-        if (typeof route.beforeEnter === "function") {
-
-            route.beforeEnter(data);
-
-        }
-
-        route.render(data);
-
-        if (typeof route.afterEnter === "function") {
-
-            route.afterEnter(data);
-
-        }
-
-    }
-
-    currentRoute() {
-
-        return this.current;
-
-    }
-
-    exists(name) {
-
-        return this.routes.has(name);
-
-    }
-
+  list() {
+    return [...this.routes.keys()];
+  }
 }
 
-const Router = new RouterEngine();
+const router = new Router();
 
-export {
+// Daftarkan modul yang sudah aktif secara riil
+router.register("customer", customer);
+router.register("vehicle", vehicle);
 
-    Router,
+// Aktifkan modul parts & settings ke router inti dengan wrapper init standard
+router.register("parts", { init: () => partsView.init() });
+router.register("settings", { init: () => settingsView.init() });
 
-    RouterEngine
+// Placeholder untuk modul Sprint berikutnya yang akan diisi fungsionalnya
+[
+  "dashboard",
+  "reception",
+  "booking",
+  "workorder",
+  "inventory",
+  "purchasing",
+  "finance",
+  "invoice",
+  "pos",
+  "reports",
+  "employee",
+  "knowledge",
+  "etk",
+  "wiring",
+  "tis",
+  "vin",
+  "dtc",
+  "ista",
+  "coding",
+  "programming",
+  "livedata"
+].forEach(m => {
+  if (!router.has(m)) {
+    router.register(m, { 
+      init: () => {
+        const container = document.getElementById("main-content") || document.getElementById("content") || document.body;
+        if (container) {
+          container.innerHTML = `<div class="p-4 text-white bg-dark">Modul ${m} sedang dalam antrean Sprint.</div>`;
+        }
+      } 
+    });
+  }
+});
 
-};
+export default router;

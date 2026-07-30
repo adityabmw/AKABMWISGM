@@ -1,82 +1,26 @@
-// ==========================================================
-// AKA BMW ISGM
-// Work Order View
-// Enterprise v6.0
-// ==========================================================
+import Controller from "./workorder.controller.js";
 
-class WorkOrderView {
+class WorkOrderView{
 
-    constructor() {
+async render(){
 
-        this.tableBody =
-            document.getElementById("workOrderTableBody");
+const table=document.getElementById("workOrderTable");
 
-    }
+if(!table) return;
 
-    render(snapshot) {
+const rows=await Controller.all();
 
-        if (!this.tableBody) return;
-
-        this.tableBody.innerHTML = "";
-
-        snapshot.forEach(doc => {
-
-            const wo = doc.data();
-
-            this.tableBody.innerHTML += `
-
-            <tr>
-
-                <td>${wo.workOrderCode ?? "-"}</td>
-
-                <td>${wo.customerName ?? "-"}</td>
-
-                <td>${wo.plateNumber ?? "-"}</td>
-
-                <td>${wo.serviceAdvisor ?? "-"}</td>
-
-                <td>${wo.mechanic ?? "-"}</td>
-
-                <td>${wo.status ?? "OPEN"}</td>
-
-                <td>${wo.grandTotal ?? 0}</td>
-
-                <td>
-
-                    <button
-                        class="btn btn-sm btn-primary"
-                        onclick="editWorkOrder('${doc.id}')">
-
-                        Edit
-
-                    </button>
-
-                    <button
-                        class="btn btn-sm btn-danger"
-                        onclick="deleteWorkOrder('${doc.id}')">
-
-                        Hapus
-
-                    </button>
-
-                </td>
-
-            </tr>
-
-            `;
-
-        });
-
-    }
+table.innerHTML=rows.map(r=>`
+<tr>
+<td>${r.workOrderNo||""}</td>
+<td>${r.customerName||""}</td>
+<td>${r.plateNumber||""}</td>
+<td>${r.status||""}</td>
+</tr>
+`).join("");
 
 }
 
-const WorkOrderViews = new WorkOrderView();
+}
 
-export {
-
-    WorkOrderViews,
-
-    WorkOrderView
-
-};
+export default new WorkOrderView();
