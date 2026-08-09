@@ -5,7 +5,7 @@
 */
 import customer from "../modules/customer/index.js";
 import vehicle from "../modules/vehicle/index.js";
-import partsView from "../modules/parts/parts.view.js";
+import PartsController from "../modules/parts/parts.controller.js";
 import settingsView from "../modules/settings/settings.view.js";
 
 class Router {
@@ -37,7 +37,12 @@ router.register("customer", customer);
 router.register("vehicle", vehicle);
 
 // Aktifkan modul parts & settings ke router inti dengan wrapper init standard
-router.register("parts", { init: () => partsView.init() });
+router.register("parts", {
+  init: async () => {
+    const controller = new PartsController();
+    await controller.render(".main-content");
+  }
+});
 router.register("settings", { init: () => settingsView.init() });
 
 // Placeholder untuk modul Sprint berikutnya yang akan diisi fungsionalnya

@@ -5,9 +5,15 @@
  Layer  : REPOSITORY
 ====================================================
 */
-export default class PartsRepository{
-constructor(){}
-init(){
-console.log("PARTS REPOSITORY READY");
-}
+
+import { FirestoreRepository } from "../../core/firestore.repository.js";
+
+export default class PartsRepository extends FirestoreRepository{
+
+    constructor(){
+
+        super("inventory");
+
+    }
+
 }

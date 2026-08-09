@@ -1,13 +1,12 @@
-/*
-====================================================
- AKA BMW ISGM
- Module : PARTS
- Layer  : SERVICE
-====================================================
-*/
-export default class PartsService{
-constructor(){}
-init(){
-console.log("PARTS SERVICE READY");
+import PartsRepository from "./parts.repository.js";
+import { BaseService } from "../../core/base.service.js";
+
+class PartsService extends BaseService{
+
+    constructor(){
+        super(new PartsRepository());
+    }
+
 }
-}
+
+export default new PartsService();
