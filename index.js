@@ -1,1 +1,2 @@
-import "./src/bootstrap.js";
+import './app.js';
+console.log('🚀 AKA BMW ISGM loaded!');

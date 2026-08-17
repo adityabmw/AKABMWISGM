@@ -1,0 +1,54 @@
+// ============================================================
+// AKA BMW ISGM — ENTRY POINT (VERSI MODULAR)
+// ============================================================
+import './style.css';
+import { initState } from './src/core/state.js';
+import { initEventBus } from './src/core/event-bus.js';
+import { initRouter } from './src/core/router.js';
+import { CustomerService } from './src/modules/customers/customer.service.js';
+import { WOService } from './src/modules/workorders/wo.service.js';
+import { PartService } from './src/modules/parts/part.service.js';
+
+// 1. Init core
+const state = initState();
+const bus = initEventBus();
+const router = initRouter(state, bus);
+
+// 2. Toast system (dari komponen)
+window.showToast = (msg, type = 'info', duration = 3000) => {
+  const container = document.getElementById('toastContainer') || (() => {
+    const c = document.createElement('div');
+    c.id = 'toastContainer';
+    c.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;';
+    document.body.appendChild(c);
+    return c;
+  })();
+
+  const colors = { success: '#2ecc71', error: '#ff5a6a', warning: '#f1c40f', info: '#1a8cff' };
+  const toast = document.createElement('div');
+  toast.style.cssText = `
+    background: #141b2b; border: 1px solid #1c2740; border-radius: 10px;
+    padding: 12px 20px; color: #e8edf5; font-size: 13px;
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+    border-left: 4px solid ${colors[type] || colors.info};
+    animation: slideIn 0.2s ease;
+  `;
+  toast.innerHTML = `<span>${msg}</span><span style="cursor:pointer;color:#4a5e7e;margin-left:12px;" onclick="this.parentElement.remove()">✕</span>`;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), duration);
+};
+
+// 3. Load services
+const customerService = new CustomerService(state, bus);
+const woService = new WOService(state, bus);
+const partService = new PartService(state, bus);
+
+customerService.load();
+woService.load();
+partService.load();
+
+// 4. Navigasi default
+navigate('dashboard');
+
+console.log('🚀 AKA BMW ISGM v5.0 — MODULAR VERSION!');
