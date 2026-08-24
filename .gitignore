@@ -67,3 +67,9 @@ node_modules/
 
 # dataconnect generated files
 .dataconnect
+dist/
+AKABMWISGM_BUILD/
+*.bak
+node_modules/
+.env
+
