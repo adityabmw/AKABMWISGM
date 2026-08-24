@@ -1,15 +1,12 @@
 /**
- * AKA BMW ISGM — Master Module
- *
- * Master module barrel entrypoint.
+ * AKA BMW ISGM - Master Module Barrel
+ * Fixed: no bootstrap.js dependency
  */
-
-export * from "./master.controller.js";
-export * from "./master.service.js";
-export * from "./master.repository.js";
-export * from "./master.model.js";
-export * from "./master.schema.js";
-export * from "./master.validator.js";
-export * from "./master.data.js";
-export * from "./master.events.js";
-export * from "./master.routes.js";
+export { MASTER_CATEGORY } from "./master.data.js";
+export { MasterModel } from "./master.model.js";
+export { MASTER_SCHEMA, ALLOWED_CATEGORIES } from "./master.schema.js";
+export { MasterValidator, MasterValidation } from "./master.validator.js";
+export { MasterRepository, MasterRepo } from "./master.repository.js";
+export { MasterServices, MasterService } from "./master.service.js";
+export { MasterControllerAPI, MasterController } from "./master.controller.js";
+console.log("✅ Master Module loaded");

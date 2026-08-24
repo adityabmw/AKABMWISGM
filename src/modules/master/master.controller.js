@@ -1,46 +1,17 @@
-// ================================================================
-// AKA BMW ISGM
-// Master Controller
-// ================================================================
-
+/**
+ * Master Controller
+ */
 import { MasterServices } from "./master.service.js";
 
-class MasterController {
-
-    async create(data){
-
-        return await MasterServices.create(data);
-
-    }
-
-    async update(id,data){
-
-        return await MasterServices.update(id,data);
-
-    }
-
-    async delete(id){
-
-        return await MasterServices.delete(id);
-
-    }
-
-    async list(){
-
-        return await MasterServices.all();
-
-    }
-
-}
-
-const MasterControllerAPI =
-
-new MasterController();
-
-export {
-
-MasterControllerAPI,
-
-MasterController
-
+export const MasterControllerAPI = {
+  create: (data) => MasterServices.create(data),
+  update: (id, data) => MasterServices.update(id, data),
+  delete: (id) => MasterServices.delete(id),
+  list: () => MasterServices.list(),
+  get: (id) => MasterServices.get(id),
+  seed: async () => {
+    const { seedMaster } = await import("./master.seed.js");
+    return seedMaster();
+  }
 };
+export const MasterController = MasterControllerAPI;
