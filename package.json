@@ -1,7 +1,7 @@
 {
   "name": "aka-bmw-isgm",
   "version": "5.0.0",
-  "description": "AKA BMW ISGM — Integrated System Gateway Management",
+  "description": "AKA BMW ISGM \u2014 Integrated System Gateway Management",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 3000",
@@ -13,8 +13,8 @@
     "functions:deploy": "cd functions && npm run deploy",
     "seed": "node scripts/seed.js",
     "test": "vitest",
-    "lint": "eslint js/**/*.js",
-    "format": "prettier --write js/**/*.js",
+    "lint": "eslint \"*.js\" \"src/**/*.js\"",
+    "format": "prettier --write \"*.js\" \"src/**/*.js\"",
     "analyze": "vite-bundle-visualizer"
   },
   "dependencies": {
