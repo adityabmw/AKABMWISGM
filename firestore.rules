@@ -1,76 +1,52 @@
-lrules_version = '2';
+rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isAuthenticated() { return request.auth != null; }
+    function isOwner() { return isAuthenticated() && request.auth.token.role == 'OWNER'; }
+    function isAdmin() { return isAuthenticated() && request.auth.token.role in ['OWNER', 'ADMIN']; }
+    function isServiceAdvisor() { return isAuthenticated() && request.auth.token.role in ['OWNER', 'ADMIN', 'SERVICE_ADVISOR']; }
+    function isTechnician() { return isAuthenticated() && request.auth.token.role in ['OWNER', 'ADMIN', 'SERVICE_ADVISOR', 'TECHNICIAN']; }
+    function isParts() { return isAuthenticated() && request.auth.token.role in ['OWNER', 'ADMIN', 'PARTS']; }
+    function isCashier() { return isAuthenticated() && request.auth.token.role in ['OWNER', 'ADMIN', 'CASHIER']; }
 
-    // Helper functions untuk mempermudah pengecekan kondisi keamanan
-    function isAuthenticated() {
-      return request.auth != null;
+    match /master_data/{docId} {
+      allow list, get: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
     }
-    
-    function getUserEmail() {
-      return request.auth.token.email;
+    match /customers/{docId} {
+      allow list, get: if isAuthenticated() && isServiceAdvisor();
+      allow create, update: if isAuthenticated() && isServiceAdvisor();
+      allow delete: if false;
     }
-
-    // Mengamankan data Customer: Mekanik, Parts, Cashier hanya bisa baca. Owner, Admin, SA bisa CRUD.
-    match /customers/{customerId} {
-      allow read: if isAuthenticated();
-      allow create, update: if isAuthenticated() && (getUserEmail().matches('.*owner.*') || getUserEmail().matches('.*admin.*') || getUserEmail().matches('.*sa.*') || request.resource.data.name != null);
-      allow delete: if isAuthenticated() && getUserEmail().matches('.*owner.*');
+    match /vehicles/{docId} {
+      allow list, get: if isAuthenticated() && isServiceAdvisor();
+      allow create, update: if isAuthenticated() && isServiceAdvisor();
+      allow delete: if false;
     }
-
-    // Mengamankan data Vehicle Database Master
-    match /vehicles/{vehicleId} {
-      allow read: if isAuthenticated();
-      allow create, update: if isAuthenticated();
-      allow delete: if isAuthenticated() && getUserEmail().matches('.*owner.*');
+    match /workorders/{docId} {
+      allow list, get: if isAuthenticated() && isTechnician();
+      allow create: if isAuthenticated() && isServiceAdvisor();
+      allow update: if isAuthenticated() && isTechnician();
+      allow delete: if false;
     }
-
-    // Mengamankan Gated Check In (Reception)
-    match /checkins/{checkinId} {
-      allow read: if isAuthenticated();
-      allow create, update: if isAuthenticated();
-      allow delete: if isAuthenticated() && (getUserEmail().matches('.*admin.*') || getUserEmail().matches('.*owner.*'));
+    match /parts/{docId} {
+      allow list, get: if isAuthenticated() && isParts();
+      allow create, update: if isAuthenticated() && isParts();
+      allow delete: if false;
     }
-
-    // Mengamankan Work Order: Mekanik hanya diizinkan mengubah progress dan status pengerjaan unit
-    match /workorders/{woId} {
-      allow read: if isAuthenticated();
-      allow create: if isAuthenticated();
-      allow update: if isAuthenticated() && (
-        getUserEmail().matches('.*owner.*') || 
-        getUserEmail().matches('.*sa.*') || 
-        getUserEmail().matches('.*admin.*') ||
-        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['progress', 'status']))
-      );
-      allow delete: if isAuthenticated() && getUserEmail().matches('.*owner.*');
+    match /invoices/{docId} {
+      allow list, get: if isAuthenticated() && isCashier();
+      allow create, update: if isAuthenticated() && isCashier();
+      allow delete: if false;
     }
-
-    // Mengamankan Modul Inventaris Suku Cadang Gudang
-    match /parts/{partId} {
-      allow read: if isAuthenticated();
-      allow create, update: if isAuthenticated();
-      allow delete: if isAuthenticated() && getUserEmail().matches('.*owner.*');
+    match /users/{docId} {
+      allow list, get: if isAuthenticated() && isAdmin();
+      allow create: if isAuthenticated() && isOwner();
+      allow update: if isAuthenticated() && isAdmin();
+      allow delete: if false;
     }
-
-    // Mengamankan Berkas Estimasi Biaya Perbaikan
-    match /estimations/{estimationId} {
-      allow read: if isAuthenticated();
-      allow create, update: if isAuthenticated();
-      allow delete: if isAuthenticated() && getUserEmail().matches('.*owner.*');
-    }
-
-    // Mengamankan Invoice Finansial: Hanya OWNER dan CASHIER yang memiliki hak penuh
-    match /invoices/{invoiceId} {
-      allow read: if isAuthenticated();
-      allow create, update: if isAuthenticated();
-      allow delete: if isAuthenticated() && getUserEmail().matches('.*owner.*');
-    }
-
-    // Audit Log: Bersifat Append-Only. Siapa pun yang login bisa membuat log, tapi TIDAK ADA YANG BISA MENGUBAH / MENGHAPUS LOG
-    match /audit_logs/{logId} {
-      allow read: if isAuthenticated() && getUserEmail().matches('.*owner.*');
-      allow create: if isAuthenticated();
-      allow update, delete: if false;
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }
