@@ -1,52 +1,8 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function isAuthenticated() { return request.auth != null; }
-    function isOwner() { return isAuthenticated() && request.auth.token.role == 'OWNER'; }
-    function isAdmin() { return isAuthenticated() && request.auth.token.role in ['OWNER', 'ADMIN']; }
-    function isServiceAdvisor() { return isAuthenticated() && request.auth.token.role in ['OWNER', 'ADMIN', 'SERVICE_ADVISOR']; }
-    function isTechnician() { return isAuthenticated() && request.auth.token.role in ['OWNER', 'ADMIN', 'SERVICE_ADVISOR', 'TECHNICIAN']; }
-    function isParts() { return isAuthenticated() && request.auth.token.role in ['OWNER', 'ADMIN', 'PARTS']; }
-    function isCashier() { return isAuthenticated() && request.auth.token.role in ['OWNER', 'ADMIN', 'CASHIER']; }
-
-    match /master_data/{docId} {
-      allow list, get: if isAuthenticated();
-      allow create, update, delete: if isAdmin();
-    }
-    match /customers/{docId} {
-      allow list, get: if isAuthenticated() && isServiceAdvisor();
-      allow create, update: if isAuthenticated() && isServiceAdvisor();
-      allow delete: if false;
-    }
-    match /vehicles/{docId} {
-      allow list, get: if isAuthenticated() && isServiceAdvisor();
-      allow create, update: if isAuthenticated() && isServiceAdvisor();
-      allow delete: if false;
-    }
-    match /workorders/{docId} {
-      allow list, get: if isAuthenticated() && isTechnician();
-      allow create: if isAuthenticated() && isServiceAdvisor();
-      allow update: if isAuthenticated() && isTechnician();
-      allow delete: if false;
-    }
-    match /parts/{docId} {
-      allow list, get: if isAuthenticated() && isParts();
-      allow create, update: if isAuthenticated() && isParts();
-      allow delete: if false;
-    }
-    match /invoices/{docId} {
-      allow list, get: if isAuthenticated() && isCashier();
-      allow create, update: if isAuthenticated() && isCashier();
-      allow delete: if false;
-    }
-    match /users/{docId} {
-      allow list, get: if isAuthenticated() && isAdmin();
-      allow create: if isAuthenticated() && isOwner();
-      allow update: if isAuthenticated() && isAdmin();
-      allow delete: if false;
-    }
     match /{document=**} {
-      allow read, write: if false;
+      allow read, write: if true;
     }
   }
 }

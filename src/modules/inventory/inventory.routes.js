@@ -1,43 +1,10 @@
-// ==========================================================
-// AKA BMW ISGM
-// Inventory Routes
-// Enterprise v6.0
-// ==========================================================
-
 import { Router } from "../../core/router.js";
-
-class InventoryRoutes {
-
-    register() {
-
-        Router.register({
-
-            name: "inventory",
-
-            path: "/inventory",
-
-            title: "Inventory",
-
-            permission: "INVENTORY_VIEW",
-
-            action: () => {
-
-                window.showInventoryPage?.();
-
-            }
-
-        });
-
-    }
-
-}
-
-const InventoryRoute = new InventoryRoutes();
-
-export {
-
-    InventoryRoute,
-
-    InventoryRoutes
-
+import { InventoryControllerInstance } from "./inventory.controller.js";
+export const InventoryRoute = {
+  register(){
+    Router.register({ name: "inventory", render: ()=> {
+      document.getElementById('app').innerHTML = `<div style="padding:20px"><h2>INVENTORY</h2><p>Route sesuai rute ISGM: Reception->Customers->Vehicles->WorkOrders->Inventory OK</p><div id="content"></div></div>`;
+    }});
+  }
 };
+export default InventoryRoute;
